@@ -1,0 +1,659 @@
+================================================================
+REPLIT BUILD PROMPT — TALENTFLOW AI AGENT SYSTEM
+ENSE 902 Master's Project — University of Regina
+================================================================
+
+BUILD ME A COMPLETE PYTHON-BASED AI AGENT SYSTEM called TalentFlow
+that uses the Anthropic Claude API to provide proactive HR intelligence
+for small to medium enterprises (SMEs).
+
+This is a master's level research project. The system must demonstrate
+that AI agents can surface HR insights that existing rule-based HR
+software (BambooHR, Zoho People, etc.) fundamentally cannot provide.
+
+================================================================
+TECH STACK — USE EXACTLY THESE, NOTHING ELSE
+================================================================
+
+- Language: Python only
+- LLM: Anthropic Claude API (model: claude-sonnet-4-20250514)
+- UI: Streamlit (dashboard)
+- Backend API: Flask (your own API endpoints)
+- Storage: JSON files only (no database)
+- Environment: python-dotenv for API key management
+
+Install command: pip install anthropic streamlit flask python-dotenv
+
+================================================================
+PROJECT FOLDER STRUCTURE — CREATE EXACTLY THIS
+================================================================
+
+TalentFlow/
+├── .env                          # ANTHROPIC_API_KEY=your_key_here
+├── requirements.txt              # all pip dependencies
+├── data/
+│   └── employees.json            # 15 synthetic employee profiles
+├── memory/
+│   └── store.json                # agent memory (start as empty {})
+├── agents/
+│   ├── __init__.py
+│   ├── employee_agent.py         # Layer 1 — individual employee agent
+│   └── manager_agent.py          # Layer 2 — team synthesis agent
+├── server.py                     # Flask API — your own backend API
+├── app.py                        # Streamlit dashboard UI
+├── run_system.py                 # runs full pipeline, saves results.json
+└── results.json                  # output of full system run
+
+================================================================
+STEP 1 — DATA/EMPLOYEES.JSON
+Create exactly 15 synthetic employee profiles across 3 departments.
+================================================================
+
+Each employee profile must have ALL of these fields:
+
+{
+  "id": "emp001",
+  "name": "Full Name",
+  "role": "Job Title",
+  "department": "Engineering | HR | Infrastructure",
+  "dataSource": "Synthetic profile based on Maslach Burnout Inventory overtime indicators",
+  "skills": ["skill1", "skill2"],
+  "skillsRequired": ["skill1", "skill2", "skill3", "skill4"],
+  "hoursWorkedThisWeek": 58,
+  "hoursWorkedLastWeek": 62,
+  "hoursWorkedTwoWeeksAgo": 55,
+  "overtimeWeeksInARow": 3,
+  "lastTrainingDate": "2023-08-10",
+  "leavesTakenThisYear": 2,
+  "leaveEntitlement": 15,
+  "performanceRating": 3.8,
+  "lastPerformanceReview": "2024-09-01",
+  "manager": "Manager Name",
+  "yearsAtCompany": 3
+}
+
+Create these 15 employees with VARIED profiles covering all risk types:
+
+ENGINEERING DEPARTMENT (5 employees, manager: "Dr. Sarah Mitchell"):
+1. Ravi Sharma — Backend Developer — URGENT burnout (58hrs/week, 3 weeks overtime, skill gaps in Docker/Kubernetes, last training 2023)
+2. Sara Chen — Frontend Developer — HEALTHY (42hrs/week, recent training 2025, all skills current)
+3. Tom Nguyen — DevOps Engineer — MONITOR skill gap (48hrs/week, missing Terraform/Kubernetes, training 2024)
+4. Priya Patel — Full Stack Developer — MONITOR both risks (52hrs/week, 2 weeks overtime, skill gaps, training 2023)
+5. James Lee — Software Architect — HEALTHY (40hrs/week, training 2025, all skills current, high performance)
+
+HR DEPARTMENT (5 employees, manager: "Michael Chen"):
+6. Maria Torres — HR Coordinator — URGENT burnout (61hrs/week, 4 weeks overtime, only 1 leave day taken)
+7. David Kim — HR Analyst — HEALTHY (41hrs/week, balanced, recent training)
+8. Aisha Malik — Recruitment Specialist — MONITOR skill gap (43hrs/week, no training in 20 months)
+9. Robert Johnson — Payroll Specialist — MONITOR mild overtime (50hrs/week, 2 weeks overtime)
+10. Lisa Wang — HR Manager — HEALTHY (44hrs/week, all current, good performance)
+
+INFRASTRUCTURE DEPARTMENT (5 employees, manager: "Jennifer Park"):
+11. Carlos Rivera — Network Engineer — URGENT burnout (60hrs/week, 5 weeks overtime, 0 leave taken)
+12. Emma Thompson — Systems Administrator — HEALTHY (40hrs/week, recent training, all skills current)
+13. Ahmed Hassan — Cloud Engineer — MONITOR skill gap (45hrs/week, missing Azure/Terraform)
+14. Sophie Martin — Security Analyst — MONITOR both risks (53hrs/week, skill gaps in new security tools)
+15. Kevin Zhang — IT Support Lead — HEALTHY (42hrs/week, balanced workload, good performance)
+
+================================================================
+STEP 2 — MEMORY/STORE.JSON
+Start as empty dictionary. Will be auto-populated when agents run.
+================================================================
+
+Content: {}
+
+================================================================
+STEP 3 — AGENTS/EMPLOYEE_AGENT.PY
+This is Layer 1 — one agent analyzes one employee at a time.
+================================================================
+
+import anthropic
+import json
+import os
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+MEMORY_FILE = "memory/store.json"
+
+def load_memory():
+    if not os.path.exists(MEMORY_FILE):
+        return {}
+    with open(MEMORY_FILE, "r") as f:
+        return json.load(f)
+
+def save_memory(data):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+def get_employee_history(employee_id):
+    memory = load_memory()
+    return memory.get(employee_id, [])
+
+def append_to_history(employee_id, insight):
+    memory = load_memory()
+    if employee_id not in memory:
+        memory[employee_id] = []
+    memory[employee_id].append({
+        "timestamp": datetime.now().isoformat(),
+        "insight": insight
+    })
+    # Keep only last 10 records per employee
+    memory[employee_id] = memory[employee_id][-10:]
+    save_memory(memory)
+
+def run_employee_agent(employee):
+    # Calculate derived metrics
+    skill_gaps = [s for s in employee["skillsRequired"] if s not in employee["skills"]]
+    days_since_training = (datetime.now() - datetime.strptime(employee["lastTrainingDate"], "%Y-%m-%d")).days
+    history = get_employee_history(employee["id"])
+
+    # Build history context for longitudinal reasoning
+    if history:
+        history_context = f"PREVIOUS AGENT OBSERVATIONS ({len(history)} records):\n"
+        for h in history:
+            history_context += f"- {h['timestamp'][:10]}: burnout={h['insight']['burnoutRisk']}, status={h['insight']['overallStatus']}, trend={h['insight'].get('trend','unknown')}\n"
+    else:
+        history_context = "No previous observations — this is the first analysis for this employee."
+
+    prompt = f"""
+You are an intelligent HR assistant agent assigned to monitor one specific employee.
+Your job is to analyze their data and produce a structured HR insight report.
+Use both current data AND historical observations to detect trends over time.
+
+{history_context}
+
+CURRENT EMPLOYEE DATA:
+Name: {employee['name']}
+Role: {employee['role']}
+Department: {employee['department']}
+Years at Company: {employee['yearsAtCompany']}
+
+WORKLOAD DATA:
+- Hours worked this week: {employee['hoursWorkedThisWeek']}
+- Hours worked last week: {employee['hoursWorkedLastWeek']}
+- Hours worked two weeks ago: {employee['hoursWorkedTwoWeeksAgo']}
+- Consecutive overtime weeks: {employee['overtimeWeeksInARow']}
+
+SKILLS DATA:
+- Current skills: {', '.join(employee['skills'])}
+- Required skills for role: {', '.join(employee['skillsRequired'])}
+- Identified skill gaps: {', '.join(skill_gaps) if skill_gaps else 'None'}
+- Days since last training: {days_since_training}
+
+LEAVE AND PERFORMANCE:
+- Leave taken this year: {employee['leavesTakenThisYear']} out of {employee['leaveEntitlement']} days
+- Performance rating: {employee['performanceRating']} out of 5.0
+- Last performance review: {employee['lastPerformanceReview']}
+
+IMPORTANT REASONING RULES:
+- Burnout risk is HIGH if: overtime weeks >= 3 AND hours > 55, OR leave taken < 3 AND overtime >= 2
+- Burnout risk is MEDIUM if: overtime weeks >= 2 OR hours consistently 48-55
+- Skill gap is HIGH if: 3+ skills missing AND days since training > 365
+- If previous observations show escalating burnout, increase urgency
+- Trend is "deteriorating" if burnout or skill gap is worse than previous observations
+- Trend is "improving" if situation is better than previous observations
+- Trend is "stable" if no significant change
+- Trend is "insufficient_data" if no history exists
+
+Return ONLY this exact JSON structure with no extra text:
+{{
+  "employeeId": "{employee['id']}",
+  "employeeName": "{employee['name']}",
+  "role": "{employee['role']}",
+  "department": "{employee['department']}",
+  "burnoutRisk": "low | medium | high",
+  "burnoutReason": "one detailed sentence explaining the burnout assessment",
+  "skillGapSeverity": "none | low | medium | high",
+  "skillGapDetails": "specific gaps identified and their business impact",
+  "trainingRecommendation": "specific course, certification, or skill to pursue",
+  "managerAlert": "one specific concrete action the manager should take this week",
+  "trend": "improving | stable | deteriorating | insufficient_data",
+  "overallStatus": "healthy | monitor | urgent",
+  "confidenceScore": 0.0
+}}
+
+Set confidenceScore between 0.7 and 1.0 based on how complete the data is.
+"""
+
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    insight = json.loads(response.content[0].text)
+    append_to_history(employee["id"], insight)
+    return insight
+
+================================================================
+STEP 4 — AGENTS/MANAGER_AGENT.PY
+This is Layer 2 — synthesizes all employee agent outputs for a team.
+================================================================
+
+import anthropic
+import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+def run_manager_agent(employee_insights, manager_name, department_name):
+    urgent = [e for e in employee_insights if e["overallStatus"] == "urgent"]
+    monitor = [e for e in employee_insights if e["overallStatus"] == "monitor"]
+    healthy = [e for e in employee_insights if e["overallStatus"] == "healthy"]
+
+    employee_summaries = "\n".join([
+        f"- {e['employeeName']} ({e['role']}): status={e['overallStatus']}, burnout={e['burnoutRisk']}, skillGap={e['skillGapSeverity']}, trend={e['trend']}, alert='{e['managerAlert']}'"
+        for e in employee_insights
+    ])
+
+    prompt = f"""
+You are a senior HR intelligence agent responsible for synthesizing
+individual employee agent reports and advising a department manager.
+Your job is to identify team-wide patterns, prioritize actions, and
+surface insights that no single employee report can reveal alone.
+
+MANAGER: {manager_name}
+DEPARTMENT: {department_name}
+TEAM SIZE: {len(employee_insights)} employees
+
+INDIVIDUAL EMPLOYEE AGENT REPORTS:
+{employee_summaries}
+
+TEAM STATISTICS:
+- Urgent cases: {len(urgent)} employees
+- Needs monitoring: {len(monitor)} employees  
+- Healthy: {len(healthy)} employees
+- Urgent employee names: {', '.join([e['employeeName'] for e in urgent]) if urgent else 'None'}
+
+YOUR ANALYSIS TASKS:
+1. Identify the single most critical issue requiring immediate action
+2. Detect any team-wide patterns (e.g., widespread burnout suggests workload problem, not individual issue)
+3. Prioritize which employee needs manager attention first and why
+4. Calculate a team health score from 1-10
+5. Give one strategic recommendation for long-term team health
+
+IMPORTANT: A pattern exists if 3+ employees share the same risk type.
+If majority of team is in overtime, this is a systemic workload problem, not individual.
+
+Return ONLY this exact JSON structure with no extra text:
+{{
+  "managerName": "{manager_name}",
+  "departmentName": "{department_name}",
+  "teamSize": {len(employee_insights)},
+  "urgentCount": {len(urgent)},
+  "monitorCount": {len(monitor)},
+  "healthyCount": {len(healthy)},
+  "teamHealthScore": 0,
+  "criticalIssue": "the single most urgent issue requiring immediate action",
+  "teamPattern": "specific pattern detected across employees, or No pattern detected",
+  "priorityEmployee": "name of employee who needs attention most urgently",
+  "priorityReason": "specific reason why this person needs attention first",
+  "topThreeActions": [
+    "specific action 1 for manager to take this week",
+    "specific action 2 for manager to take this week",
+    "specific action 3 for manager to take this week"
+  ],
+  "strategicRecommendation": "one longer-term recommendation for overall team health",
+  "confidenceScore": 0.0
+}}
+
+Set teamHealthScore as integer 1-10.
+Set confidenceScore between 0.7 and 1.0.
+"""
+
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return json.loads(response.content[0].text)
+
+================================================================
+STEP 5 — RUN_SYSTEM.PY
+Runs the full pipeline and saves results to results.json
+================================================================
+
+import json
+from agents.employee_agent import run_employee_agent
+from agents.manager_agent import run_manager_agent
+
+def run_full_system():
+    print("=== TalentFlow AI Agent System Starting ===\n")
+
+    # Load employee data
+    with open("data/employees.json", "r") as f:
+        employees = json.load(f)
+
+    # Group employees by department
+    departments = {}
+    for emp in employees:
+        dept = emp["department"]
+        if dept not in departments:
+            departments[dept] = {"employees": [], "manager": emp["manager"]}
+        departments[dept]["employees"].append(emp)
+
+    all_employee_insights = []
+    all_manager_reports = []
+
+    # Run employee agents
+    print("Step 1: Running employee agents...")
+    for emp in employees:
+        print(f"  Analyzing: {emp['name']}...")
+        insight = run_employee_agent(emp)
+        all_employee_insights.append(insight)
+        print(f"  Result: {insight['overallStatus'].upper()} | Burnout: {insight['burnoutRisk']} | Trend: {insight['trend']}")
+
+    print(f"\nCompleted {len(all_employee_insights)} employee analyses.\n")
+
+    # Run manager agents per department
+    print("Step 2: Running manager agents per department...")
+    for dept_name, dept_data in departments.items():
+        dept_employee_insights = [
+            i for i in all_employee_insights
+            if any(e["department"] == dept_name and e["name"] == i["employeeName"] for e in employees)
+        ]
+        print(f"  Processing department: {dept_name}...")
+        manager_report = run_manager_agent(
+            dept_employee_insights,
+            dept_data["manager"],
+            dept_name
+        )
+        all_manager_reports.append(manager_report)
+        print(f"  Team Health Score: {manager_report['teamHealthScore']}/10")
+
+    # Save all results
+    results = {
+        "employeeInsights": all_employee_insights,
+        "managerReports": all_manager_reports,
+        "summary": {
+            "totalEmployees": len(all_employee_insights),
+            "urgent": len([e for e in all_employee_insights if e["overallStatus"] == "urgent"]),
+            "monitor": len([e for e in all_employee_insights if e["overallStatus"] == "monitor"]),
+            "healthy": len([e for e in all_employee_insights if e["overallStatus"] == "healthy"])
+        }
+    }
+
+    with open("results.json", "w") as f:
+        json.dump(results, f, indent=2)
+
+    print("\n=== System Complete ===")
+    print(f"Total: {results['summary']['totalEmployees']} employees analyzed")
+    print(f"Urgent: {results['summary']['urgent']} | Monitor: {results['summary']['monitor']} | Healthy: {results['summary']['healthy']}")
+    print("Results saved to results.json")
+
+    return results
+
+if __name__ == "__main__":
+    run_full_system()
+
+================================================================
+STEP 6 — SERVER.PY
+Your own Flask API — this is what you show professor as "your API"
+================================================================
+
+from flask import Flask, jsonify, request
+from agents.employee_agent import run_employee_agent
+from agents.manager_agent import run_manager_agent
+import json
+
+app = Flask(__name__)
+
+def load_employees():
+    with open("data/employees.json", "r") as f:
+        return json.load(f)
+
+def load_results():
+    try:
+        with open("results.json", "r") as f:
+            return json.load(f)
+    except:
+        return None
+
+@app.route("/api/employees", methods=["GET"])
+def get_employees():
+    employees = load_employees()
+    return jsonify({"employees": employees, "total": len(employees)})
+
+@app.route("/api/analyze/<employee_id>", methods=["GET"])
+def analyze_employee(employee_id):
+    employees = load_employees()
+    emp = next((e for e in employees if e["id"] == employee_id), None)
+    if not emp:
+        return jsonify({"error": "Employee not found"}), 404
+    insight = run_employee_agent(emp)
+    return jsonify(insight)
+
+@app.route("/api/analyze-team", methods=["GET"])
+def analyze_team():
+    employees = load_employees()
+    insights = [run_employee_agent(emp) for emp in employees]
+    departments = {}
+    for emp in employees:
+        dept = emp["department"]
+        if dept not in departments:
+            departments[dept] = {"employees": [], "manager": emp["manager"]}
+        departments[dept]["employees"].append(emp)
+    manager_reports = []
+    for dept_name, dept_data in departments.items():
+        dept_insights = [i for i in insights if any(
+            e["department"] == dept_name and e["name"] == i["employeeName"]
+            for e in employees
+        )]
+        report = run_manager_agent(dept_insights, dept_data["manager"], dept_name)
+        manager_reports.append(report)
+    return jsonify({"employeeInsights": insights, "managerReports": manager_reports})
+
+@app.route("/api/results", methods=["GET"])
+def get_results():
+    results = load_results()
+    if not results:
+        return jsonify({"error": "No results yet. Run run_system.py first."}), 404
+    return jsonify(results)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=3001)
+
+================================================================
+STEP 7 — APP.PY
+Streamlit dashboard — the visual UI for the professor demo
+================================================================
+
+import streamlit as st
+import json
+import subprocess
+import os
+
+st.set_page_config(
+    page_title="TalentFlow AI Agent System",
+    page_icon="🤖",
+    layout="wide"
+)
+
+st.title("🤖 TalentFlow — AI-Powered HR Intelligence System")
+st.caption("Multi-Agent LLM System for Proactive HR Analytics | ENSE 902 | University of Regina")
+
+def load_results():
+    if os.path.exists("results.json"):
+        with open("results.json", "r") as f:
+            return json.load(f)
+    return None
+
+def load_employees():
+    with open("data/employees.json", "r") as f:
+        return json.load(f)
+
+# Sidebar controls
+with st.sidebar:
+    st.header("System Controls")
+    if st.button("▶ Run Full Agent System", type="primary"):
+        with st.spinner("Running AI agents... this takes 30-60 seconds..."):
+            subprocess.run(["python", "run_system.py"])
+        st.success("Analysis complete!")
+        st.rerun()
+    st.divider()
+    st.header("About")
+    st.write("This system uses Claude AI agents to proactively identify HR risks that traditional HR software cannot detect.")
+    employees = load_employees()
+    st.metric("Total Employees", len(employees))
+
+# Load results
+results = load_results()
+
+if not results:
+    st.info("Click 'Run Full Agent System' in the sidebar to start the analysis.")
+    st.stop()
+
+# Summary metrics row
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Employees", results["summary"]["totalEmployees"])
+col2.metric("🔴 Urgent", results["summary"]["urgent"])
+col3.metric("🟡 Monitor", results["summary"]["monitor"])
+col4.metric("🟢 Healthy", results["summary"]["healthy"])
+
+st.divider()
+
+# Employee insights tab and Manager reports tab
+tab1, tab2 = st.tabs(["👤 Employee Agent Reports", "👔 Manager Agent Reports"])
+
+with tab1:
+    st.subheader("Individual Employee Agent Analysis")
+
+    # Filter by status
+    status_filter = st.selectbox("Filter by status", ["All", "urgent", "monitor", "healthy"])
+
+    for insight in results["employeeInsights"]:
+        if status_filter != "All" and insight["overallStatus"] != status_filter:
+            continue
+
+        if insight["overallStatus"] == "urgent":
+            with st.expander(f"🔴 {insight['employeeName']} — {insight['role']} — URGENT", expanded=True):
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Burnout Risk", insight["burnoutRisk"].upper())
+                col2.metric("Skill Gap", insight["skillGapSeverity"].upper())
+                col3.metric("Trend", insight["trend"])
+                st.error(f"**Manager Alert:** {insight['managerAlert']}")
+                st.write(f"**Burnout Reason:** {insight['burnoutReason']}")
+                st.write(f"**Skill Gap Details:** {insight['skillGapDetails']}")
+                st.info(f"**Training Recommendation:** {insight['trainingRecommendation']}")
+
+        elif insight["overallStatus"] == "monitor":
+            with st.expander(f"🟡 {insight['employeeName']} — {insight['role']} — MONITOR"):
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Burnout Risk", insight["burnoutRisk"].upper())
+                col2.metric("Skill Gap", insight["skillGapSeverity"].upper())
+                col3.metric("Trend", insight["trend"])
+                st.warning(f"**Manager Alert:** {insight['managerAlert']}")
+                st.write(f"**Burnout Reason:** {insight['burnoutReason']}")
+                st.info(f"**Training Recommendation:** {insight['trainingRecommendation']}")
+
+        else:
+            with st.expander(f"🟢 {insight['employeeName']} — {insight['role']} — HEALTHY"):
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Burnout Risk", insight["burnoutRisk"].upper())
+                col2.metric("Skill Gap", insight["skillGapSeverity"].upper())
+                col3.metric("Trend", insight["trend"])
+                st.success(f"**Status:** {insight['managerAlert']}")
+
+with tab2:
+    st.subheader("Manager Agent — Department Reports")
+
+    for report in results["managerReports"]:
+        st.subheader(f"📊 {report['departmentName']} Department")
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Team Health Score", f"{report['teamHealthScore']}/10")
+        col2.metric("Urgent", report["urgentCount"])
+        col3.metric("Monitor", report["monitorCount"])
+        col4.metric("Healthy", report["healthyCount"])
+
+        st.error(f"**Critical Issue:** {report['criticalIssue']}")
+
+        if report["teamPattern"] != "No pattern detected":
+            st.warning(f"**Team Pattern Detected:** {report['teamPattern']}")
+
+        st.write(f"**Priority Employee:** {report['priorityEmployee']} — {report['priorityReason']}")
+
+        st.write("**Top 3 Actions for Manager:**")
+        for i, action in enumerate(report["topThreeActions"], 1):
+            st.write(f"{i}. {action}")
+
+        st.info(f"**Strategic Recommendation:** {report['strategicRecommendation']}")
+        st.divider()
+
+================================================================
+STEP 8 — REQUIREMENTS.TXT
+================================================================
+
+anthropic
+streamlit
+flask
+python-dotenv
+
+================================================================
+STEP 9 — .ENV FILE
+================================================================
+
+ANTHROPIC_API_KEY=your_actual_key_here
+
+Get your free API key from: console.anthropic.com
+You get $5 free credit on signup — enough for the entire project.
+
+================================================================
+HOW TO RUN THE PROJECT
+================================================================
+
+Step 1: Install dependencies
+  pip install -r requirements.txt
+
+Step 2: Add your API key to .env file
+
+Step 3: Run the full agent system (generates results.json)
+  python run_system.py
+
+Step 4: Launch the Streamlit dashboard
+  streamlit run app.py
+
+Step 5: (Optional) Run your own Flask API server
+  python server.py
+  Then test at: http://localhost:3001/api/employees
+
+================================================================
+WHAT THIS SYSTEM DEMONSTRATES FOR MASTER'S RESEARCH
+================================================================
+
+1. EMPLOYEE AGENT (Layer 1):
+   - Takes 12 data fields per employee as input
+   - Loads longitudinal memory from previous runs
+   - Sends structured prompt to Claude API
+   - Returns JSON insight: burnout risk, skill gap, manager alert, trend
+   - Saves result back to memory for future trend detection
+
+2. MANAGER AGENT (Layer 2):
+   - Takes all employee insights for one department
+   - Synthesizes cross-employee patterns
+   - Identifies team-wide problems invisible at individual level
+   - Returns team health score, priority employee, strategic recommendation
+
+3. MEMORY SYSTEM:
+   - JSON store keyed by employee ID
+   - Keeps last 10 observations per employee
+   - Passed back into agent prompt for longitudinal trend reasoning
+   - This is what rule-based HR software CANNOT do
+
+4. THE RESEARCH CONTRIBUTION:
+   - Existing HR tools (BambooHR, Zoho) show data reactively
+   - This system reasons proactively about multi-factor risk
+   - No existing SME HR tool does: overtime + skill gap + leave + performance combined reasoning
+   - The agent outputs actionable manager alerts — not just dashboards
+
+================================================================
+END OF BUILD PROMPT
+================================================================
