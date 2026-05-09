@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
+    default_headers={"anthropic-org-id": "62f690b4-8f1a-4900-97ba-9eb8795c2d5a"}
+)
 
 
 def run_manager_agent(employee_insights, manager_name, department_name):
@@ -74,7 +77,7 @@ Set confidenceScore between 0.7 and 1.0.
 """
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-opus-4-1-20250805",
         max_tokens=1000,
         messages=[{"role": "user", "content": prompt}]
     )

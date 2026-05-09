@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
+    default_headers={"anthropic-org-id": "62f690b4-8f1a-4900-97ba-9eb8795c2d5a"}
+)
 
 MEMORY_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "memory", "store.json")
 
@@ -112,12 +115,66 @@ Return ONLY this exact JSON structure with no extra text:
 Set confidenceScore between 0.7 and 1.0 based on how complete the data is.
 """
 
+    # response = client.messages.create(
+    #     model="claude-opus-4-1-20250805",
+    #     max_tokens=1000,
+    #     messages=[{"role": "user", "content": prompt}]
+    # )
+
+    # insight = json.loads(response.content[0].text)
+    # append_to_history(employee["id"], insight)
+    # return insight
+
+    # response = client.messages.create(
+    #     model="claude-opus-4-1-20250805",
+    #     max_tokens=1000,
+    #     messages=[{"role": "user", "content": prompt}]
+    # )
+
+    # # Debug: print raw response
+    # raw_response = response.content[0].text
+    # print(f"Raw response: {raw_response[:200]}...")  # Print first 200 chars
+    
+    # try:
+    #     insight = json.loads(raw_response)
+    # except json.JSONDecodeError as e:
+    #     print(f"JSON Parse Error: {e}")
+    #     print(f"Full response: {raw_response}")
+    #     raise
+    
+    # # Save to memory and return
+    # append_to_history(employee["id"], insight)
+    # return insight 
+    
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-opus-4-1-20250805",
         max_tokens=1000,
         messages=[{"role": "user", "content": prompt}]
     )
 
-    insight = json.loads(response.content[0].text)
-    append_to_history(employee["id"], insight)
-    return insight
+    raw_response = response.content[0].text
+    
+    # Extract JSON if it's wrapped in markdown code blocks
+    if raw_response.startswith("```"):
+        raw_response = raw_response.split("```")[1]
+        if raw_response.startswith("json"):
+            raw_response = raw_response[4:]
+        raw_response = raw_response.strip()
+    
+    try:
+        insight = json.loads(raw_response)
+        
+        # Validate required fields exist
+        required_fields = ["employeeId", "employeeName", "overallStatus", "burnoutRisk", "trend"]
+        for field in required_fields:
+            if field not in insight:
+                raise ValueError(f"Missing required field: {field}")
+        
+        # Save to memory and return
+        append_to_history(employee["id"], insight)
+        return insight
+        
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"ERROR parsing response for {employee['name']}: {e}")
+        print(f"Raw response: {raw_response[:500]}")
+        raise 
