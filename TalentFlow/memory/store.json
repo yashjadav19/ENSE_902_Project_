@@ -35,6 +35,24 @@
         "overallStatus": "urgent",
         "confidenceScore": 0.95
       }
+    },
+    {
+      "timestamp": "2026-05-18T16:58:56.915902",
+      "insight": {
+        "employeeId": "emp001",
+        "employeeName": "Ravi Sharma",
+        "role": "Backend Developer",
+        "department": "Engineering",
+        "burnoutRisk": "high",
+        "burnoutReason": "Employee has worked 3 consecutive overtime weeks with 58-62 hours per week, has taken only 2 out of 15 available leave days this year, meeting multiple high burnout risk criteria.",
+        "skillGapSeverity": "medium",
+        "skillGapDetails": "Missing Docker and Kubernetes skills which are required for the role, with no training in 1012 days, limiting ability to work on containerized applications and modern deployment pipelines.",
+        "trainingRecommendation": "Docker Certified Associate (DCA) certification course followed by Kubernetes fundamentals training",
+        "managerAlert": "Schedule immediate 1-on-1 to discuss workload redistribution and mandate at least 2 days of PTO within the next two weeks to prevent burnout escalation.",
+        "trend": "stable",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.95
+      }
     }
   ],
   "emp002": [
@@ -52,6 +70,24 @@
         "trainingRecommendation": "Advanced React patterns or Next.js certification to stay current with frontend ecosystem evolution and maintain competitive edge.",
         "managerAlert": "Schedule a career development discussion this week to identify growth opportunities and book relevant training, given it's been over a year since last professional development activity.",
         "trend": "insufficient_data",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:05.063199",
+      "insight": {
+        "employeeId": "emp002",
+        "employeeName": "Sara Chen",
+        "role": "Frontend Developer",
+        "department": "Engineering",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working normal 40-42 hour weeks with no overtime patterns, and has used about half of available leave days showing healthy work-life balance.",
+        "skillGapSeverity": "low",
+        "skillGapDetails": "No technical skill gaps identified, but 488 days since last training suggests missing opportunities for advanced skill development and staying current with framework updates.",
+        "trainingRecommendation": "Advanced React patterns and performance optimization course, or Next.js certification to expand full-stack capabilities.",
+        "managerAlert": "Schedule a career development discussion this week to identify Sara's learning goals and book Q3 training given the 16-month training gap.",
+        "trend": "stable",
         "overallStatus": "healthy",
         "confidenceScore": 0.85
       }
@@ -75,6 +111,24 @@
         "overallStatus": "monitor",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:14.276991",
+      "insight": {
+        "employeeId": "emp003",
+        "employeeName": "Tom Nguyen",
+        "role": "DevOps Engineer",
+        "department": "Engineering",
+        "burnoutRisk": "medium",
+        "burnoutReason": "Tom has worked consistently high hours (47-49 per week) over the past three weeks without taking overtime, indicating sustained workload pressure that matches the medium burnout level from previous observation.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing critical DevOps skills Terraform and Kubernetes which are essential for modern infrastructure automation, with no training in 789 days significantly impacting ability to manage cloud infrastructure efficiently.",
+        "trainingRecommendation": "Enroll in Kubernetes Certified Administrator (CKA) certification program immediately, followed by HashiCorp Terraform Associate certification.",
+        "managerAlert": "Schedule a 1:1 this week to discuss Tom's consistent 48+ hour weeks and create a training plan for Kubernetes/Terraform skills before Q2 2027.",
+        "trend": "stable",
+        "overallStatus": "monitor",
+        "confidenceScore": 0.9
+      }
     }
   ],
   "emp004": [
@@ -94,6 +148,24 @@
         "trend": "insufficient_data",
         "overallStatus": "urgent",
         "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:22.241697",
+      "insight": {
+        "employeeId": "emp004",
+        "employeeName": "Priya Patel",
+        "role": "Full Stack Developer",
+        "department": "Engineering",
+        "burnoutRisk": "high",
+        "burnoutReason": "Working 52+ hours for 2 consecutive overtime weeks with only 3 leave days taken this year indicates high burnout risk, worsening from medium risk recorded on 2026-05-09.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing 3 critical skills (Redis, Microservices, Docker) required for role with no training in 925 days, limiting ability to work on modern distributed systems and containerized deployments.",
+        "trainingRecommendation": "Docker Certified Associate certification with hands-on microservices architecture course to address immediate technical gaps.",
+        "managerAlert": "Schedule immediate 1-on-1 to discuss workload reduction and mandatory time off, as burnout has escalated from medium to high risk over past 6 months.",
+        "trend": "deteriorating",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.9
       }
     }
   ],
@@ -115,6 +187,24 @@
         "overallStatus": "healthy",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:30.524399",
+      "insight": {
+        "employeeId": "emp005",
+        "employeeName": "James Lee",
+        "role": "Software Architect",
+        "department": "Engineering",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working normal 40-hour weeks with no overtime, has taken reasonable leave (8 of 15 days), and maintains excellent performance rating of 4.8/5.0.",
+        "skillGapSeverity": "low",
+        "skillGapDetails": "No immediate skill gaps identified as all required technical skills are present, but 462 days since last training suggests potential risk of skills becoming outdated in rapidly evolving tech stack.",
+        "trainingRecommendation": "Enroll in advanced AWS Solutions Architect certification or Kubernetes orchestration course to stay current with cloud-native architecture trends.",
+        "managerAlert": "Schedule a career development discussion this week to identify James's learning goals and approve training budget given the 15+ month gap since last professional development.",
+        "trend": "stable",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.9
+      }
     }
   ],
   "emp006": [
@@ -134,6 +224,24 @@
         "trend": "insufficient_data",
         "overallStatus": "urgent",
         "confidenceScore": 0.9
+      }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:38.552495",
+      "insight": {
+        "employeeId": "emp006",
+        "employeeName": "Maria Torres",
+        "role": "HR Coordinator",
+        "department": "HR",
+        "burnoutRisk": "high",
+        "burnoutReason": "Maria has worked 4 consecutive weeks of overtime averaging 61 hours with only 1 day of leave taken this year, showing clear signs of chronic overwork and insufficient recovery time.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing Employment Law and Analytics skills critical for HR role effectiveness, with no training in 849 days, limiting her ability to handle compliance issues and data-driven HR decisions",
+        "trainingRecommendation": "Immediate enrollment in SHRM Employment Law Fundamentals course to address compliance knowledge gap",
+        "managerAlert": "Schedule mandatory time off for Maria this week and redistribute her workload to prevent burnout escalation from the already urgent status",
+        "trend": "stable",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.95
       }
     }
   ],
@@ -155,6 +263,24 @@
         "overallStatus": "healthy",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:46.348124",
+      "insight": {
+        "employeeId": "emp007",
+        "employeeName": "David Kim",
+        "role": "HR Analyst",
+        "department": "HR",
+        "burnoutRisk": "low",
+        "burnoutReason": "David maintains healthy work hours (40-42 per week) with no consecutive overtime weeks and has used 40% of his available leave, indicating good work-life balance.",
+        "skillGapSeverity": "low",
+        "skillGapDetails": "No immediate skill gaps exist as David possesses all required role competencies, but 495 days without training suggests potential risk of skills becoming outdated in rapidly evolving HR analytics field.",
+        "trainingRecommendation": "Advanced HR Analytics certification or Power BI training to complement existing Tableau skills and stay current with industry trends.",
+        "managerAlert": "Schedule a development discussion with David this week to identify his career aspirations and enroll him in relevant training, given it's been over 16 months since his last professional development activity.",
+        "trend": "stable",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.9
+      }
     }
   ],
   "emp008": [
@@ -174,6 +300,24 @@
         "trend": "insufficient_data",
         "overallStatus": "monitor",
         "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T16:59:53.913623",
+      "insight": {
+        "employeeId": "emp008",
+        "employeeName": "Aisha Malik",
+        "role": "Recruitment Specialist",
+        "department": "HR",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working consistent 43-44 hour weeks with no overtime patterns and has used only 5 of 15 leave days, indicating healthy work-life balance.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing Employer Branding and DEI Hiring Practices skills critical for modern recruitment, with no training in 976 days impacting ability to attract diverse talent and build company reputation.",
+        "trainingRecommendation": "Enroll in SHRM's Diversity & Inclusion Certificate Program to address DEI hiring practices gap immediately.",
+        "managerAlert": "Schedule a development conversation this week to discuss training budget approval for DEI certification given the 976-day training gap.",
+        "trend": "stable",
+        "overallStatus": "monitor",
+        "confidenceScore": 0.9
       }
     }
   ],
@@ -195,6 +339,24 @@
         "overallStatus": "monitor",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:00.980537",
+      "insight": {
+        "employeeId": "emp009",
+        "employeeName": "Robert Johnson",
+        "role": "Payroll Specialist",
+        "department": "HR",
+        "burnoutRisk": "high",
+        "burnoutReason": "Robert has worked 2 consecutive overtime weeks (50-51 hours) and has only taken 4 out of 15 available leave days this year, meeting the criteria for high burnout risk.",
+        "skillGapSeverity": "medium",
+        "skillGapDetails": "Missing Workday proficiency which is a required skill for the role, and hasn't received training in over 2 years (738 days), potentially impacting payroll system efficiency.",
+        "trainingRecommendation": "Enroll in Workday HCM Payroll certification course within the next 30 days",
+        "managerAlert": "Schedule a 1:1 meeting this week to discuss workload distribution and mandate at least 2 consecutive days off before month-end",
+        "trend": "deteriorating",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.9
+      }
     }
   ],
   "emp010": [
@@ -214,6 +376,24 @@
         "trend": "insufficient_data",
         "overallStatus": "healthy",
         "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:09.228612",
+      "insight": {
+        "employeeId": "emp010",
+        "employeeName": "Lisa Wang",
+        "role": "HR Manager",
+        "department": "HR",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working reasonable hours (43-45 weekly) with no consecutive overtime weeks and has taken 7 of 15 leave days, indicating healthy work-life balance.",
+        "skillGapSeverity": "none",
+        "skillGapDetails": "Fully meets all role requirements with comprehensive HR competencies, though 544 days since last training suggests need for skill refresh to stay current with HR trends.",
+        "trainingRecommendation": "Enroll in advanced HR Analytics or AI in HR course to enhance data-driven decision making capabilities.",
+        "managerAlert": "Schedule a development discussion to identify strategic HR initiatives Lisa can lead and approve training budget for Q2 professional development.",
+        "trend": "stable",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.9
       }
     }
   ],
@@ -235,6 +415,24 @@
         "overallStatus": "urgent",
         "confidenceScore": 0.9
       }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:16.953972",
+      "insight": {
+        "employeeId": "emp011",
+        "employeeName": "Carlos Rivera",
+        "role": "Network Engineer",
+        "department": "Infrastructure",
+        "burnoutRisk": "high",
+        "burnoutReason": "Carlos has worked 5 consecutive overtime weeks averaging 60 hours with zero leave taken this year, showing sustained overwork without recovery time.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing critical modern networking skills (SD-WAN and Network Automation) with no training in 899 days, limiting ability to support infrastructure modernization initiatives.",
+        "trainingRecommendation": "Enroll immediately in SD-WAN certification course (Cisco SD-WAN or equivalent) to address most critical skill gap.",
+        "managerAlert": "Schedule mandatory time off for Carlos this week and redistribute his workload to prevent imminent burnout given 5 weeks of 60-hour schedules.",
+        "trend": "stable",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.95
+      }
     }
   ],
   "emp012": [
@@ -254,6 +452,24 @@
         "trend": "insufficient_data",
         "overallStatus": "healthy",
         "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:25.788016",
+      "insight": {
+        "employeeId": "emp012",
+        "employeeName": "Emma Thompson",
+        "role": "Systems Administrator",
+        "department": "Infrastructure",
+        "burnoutRisk": "low",
+        "burnoutReason": "Emma maintains consistent 40-41 hour work weeks with no overtime patterns, has taken 40% of available leave, and shows strong performance ratings of 4.4/5.0.",
+        "skillGapSeverity": "low",
+        "skillGapDetails": "No immediate skill gaps identified as all required technical skills are present, but 478 days without training suggests potential risk of skills becoming outdated in rapidly evolving infrastructure technologies.",
+        "trainingRecommendation": "Pursue cloud infrastructure certification (Azure or AWS) to complement existing VMware expertise and modernize skillset.",
+        "managerAlert": "Schedule a training plan discussion with Emma this week to identify relevant upskilling opportunities, as it has been over 16 months since her last training.",
+        "trend": "stable",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.9
       }
     }
   ],
@@ -275,6 +491,24 @@
         "overallStatus": "monitor",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:33.850235",
+      "insight": {
+        "employeeId": "emp013",
+        "employeeName": "Ahmed Hassan",
+        "role": "Cloud Engineer",
+        "department": "Infrastructure",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working normal 44-46 hour weeks with no consecutive overtime, and has taken 5 days of leave this year, indicating healthy work-life balance.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing Azure and Terraform skills critical for multi-cloud infrastructure management, with no training in 702 days severely limiting cloud deployment capabilities.",
+        "trainingRecommendation": "Terraform Associate Certification with hands-on Azure fundamentals course",
+        "managerAlert": "Schedule immediate training plan discussion with Ahmed to address 702-day training gap and enroll in Azure/Terraform courses this week.",
+        "trend": "stable",
+        "overallStatus": "monitor",
+        "confidenceScore": 0.9
+      }
     }
   ],
   "emp014": [
@@ -295,6 +529,24 @@
         "overallStatus": "urgent",
         "confidenceScore": 0.85
       }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:42.277016",
+      "insight": {
+        "employeeId": "emp014",
+        "employeeName": "Sophie Martin",
+        "role": "Security Analyst",
+        "department": "Infrastructure",
+        "burnoutRisk": "high",
+        "burnoutReason": "Sophie has worked 2 consecutive overtime weeks with 52-54 hours each week, has taken only 3 out of 15 available leave days, meeting the criteria for high burnout risk, which aligns with the previous urgent status from May.",
+        "skillGapSeverity": "high",
+        "skillGapDetails": "Missing 3 critical skills (Zero Trust Architecture, Cloud Security, SOAR Platforms) with 941 days since last training, creating security vulnerabilities in modern cloud-based infrastructure protection.",
+        "trainingRecommendation": "Enroll immediately in AWS or Azure Cloud Security certification program to address the most critical gap in cloud security expertise.",
+        "managerAlert": "Schedule a 1-on-1 meeting this week to redistribute Sophie's workload to under 45 hours and mandate she takes at least 2 days off within the next two weeks.",
+        "trend": "stable",
+        "overallStatus": "urgent",
+        "confidenceScore": 0.95
+      }
     }
   ],
   "emp015": [
@@ -314,6 +566,24 @@
         "trend": "insufficient_data",
         "overallStatus": "healthy",
         "confidenceScore": 0.85
+      }
+    },
+    {
+      "timestamp": "2026-05-18T17:00:50.114702",
+      "insight": {
+        "employeeId": "emp015",
+        "employeeName": "Kevin Zhang",
+        "role": "IT Support Lead",
+        "department": "Infrastructure",
+        "burnoutRisk": "low",
+        "burnoutReason": "Working standard 41-43 hour weeks with no overtime patterns and having taken nearly half of available leave demonstrates healthy work-life balance.",
+        "skillGapSeverity": "low",
+        "skillGapDetails": "No technical skill gaps identified, but 590 days since last training suggests potential staleness in evolving IT practices and leadership development.",
+        "trainingRecommendation": "Enroll in advanced ServiceNow administration or ITIL 4 certification to maintain technical currency and leadership effectiveness.",
+        "managerAlert": "Schedule a development discussion with Kevin this week to identify his career growth interests and book relevant training before the 2-year mark.",
+        "trend": "stable",
+        "overallStatus": "healthy",
+        "confidenceScore": 0.9
       }
     }
   ]

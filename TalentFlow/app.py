@@ -6,7 +6,7 @@ import sys
 
 st.set_page_config(
     page_title="TalentFlow AI Agent System",
-    page_icon="🤖",
+    page_icon="",
     layout="wide"
 )
 
@@ -35,8 +35,8 @@ def load_memory():
     return {}
 
 
-st.title("🤖 TalentFlow — AI-Powered HR Intelligence System")
-st.caption("Multi-Agent LLM System for Proactive HR Analytics | ENSE 902 | University of Regina")
+st.title("Proactive Personalized Employee Management Application")
+st.caption("HR Intelligence")
 
 employees = load_employees()
 
@@ -44,7 +44,7 @@ with st.sidebar:
     st.header("System Controls")
 
     if st.button("▶ Run Full Agent System", type="primary", use_container_width=True):
-        with st.spinner("Running AI agents... this takes 60-90 seconds for 15 employees..."):
+        with st.spinner("Running AI agents... this takes 60-90 seconds ..."):
             script_path = os.path.join(BASE_DIR, "run_system.py")
             result = subprocess.run(
                 [sys.executable, script_path],
@@ -71,8 +71,8 @@ with st.sidebar:
     st.divider()
     st.header("About")
     st.write(
-        "This system uses Claude AI agents to proactively identify HR risks "
-        "that traditional HR software cannot detect."
+        "TalentFlow is a layered LLM-based algorithm that proactively identifies "
+    "workforce risks that traditional HR software cannot detect."
     )
     st.metric("Total Employees", len(employees))
 
@@ -84,19 +84,12 @@ with st.sidebar:
         total_observations = sum(len(v) for v in memory.values())
         st.metric("Total Observations Stored", total_observations)
 
-    st.divider()
-    st.header("System Architecture")
-    st.write("**Layer 1:** Employee Agent")
-    st.caption("Analyzes individual data + memory history")
-    st.write("**Layer 2:** Manager Agent")
-    st.caption("Synthesizes team-wide patterns")
-    st.write("**Memory:** JSON longitudinal store")
-    st.caption("Tracks trend changes across runs")
+
 
 results = load_results()
 
 if not results:
-    st.info("Click **▶ Run Full Agent System** in the sidebar to start the analysis. This will call the Claude AI agents and may take 60-90 seconds.")
+    st.info("Click **▶ Run Full Agent System** in the sidebar to start the analysis. This may take 60-90 seconds.")
 
     st.divider()
     st.subheader("Employee Roster Preview")
@@ -221,7 +214,7 @@ with tab2:
 
 with tab3:
     st.subheader("Agent Memory — Longitudinal Observation Store")
-    st.write("The memory system stores up to 10 observations per employee across runs. This enables trend detection over time — a capability that rule-based HR tools fundamentally cannot provide.")
+    st.write("The memory system stores up to 10 observations per employee across runs. This enables trend detection over time.")
 
     memory = load_memory()
 
@@ -243,7 +236,7 @@ with tab3:
                     trend_icon = {"improving": "📈", "deteriorating": "📉", "stable": "➡️", "insufficient_data": "❓"}.get(ins.get("trend", ""), "")
                     status_icon = {"urgent": "🔴", "monitor": "🟡", "healthy": "🟢"}.get(ins.get("overallStatus", ""), "")
                     st.write(
-                        f"**Run {len(history) - i}** ({timestamp}) — "
+                        f"**Run {len(history) - i}**  — "
                         f"{status_icon} {ins.get('overallStatus', 'N/A').upper()} | "
                         f"Burnout: {ins.get('burnoutRisk', 'N/A')} | "
                         f"Skill Gap: {ins.get('skillGapSeverity', 'N/A')} | "
